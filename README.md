@@ -1,64 +1,44 @@
-# REAL-ESTATE-PRICE-PREDICTION
-Overview
-This project aims to predict the price per unit area of real estate properties using supervised machine learning. By leveraging key features such as house age, proximity to public transport, and number of nearby amenities, the model enables data-driven property valuation. This can empower buyers, sellers, and agents to make more informed decisions in real estate markets.
+# Real Estate Valuation — Reproducible Regression Review
 
-Problem Statement
-In real estate, price estimation often relies on subjective judgment or outdated comparative listings. This leads to inconsistencies and inefficient negotiations. Our goal is to build a machine learning model that automates the prediction of property prices with improved accuracy, consistency, and scalability. By training on historical data, the model can uncover patterns that correlate strongly with property values.
+A historical-data regression case study using the UCI Real Estate Valuation dataset: 414 observations from the Sindian district of New Taipei City, Taiwan. The goal is to compare a transparent model with a simple baseline and explain the limits of its estimates.
 
-Dataset
-The dataset (Real estate.csv) contains structured information on property listings:
+## Holdout results
 
-Feature	Description
-No	Serial number (not used in modeling)
-X1 transaction date	Date of transaction (year/month)
-X2 house age	Age of the house in years
-X3 distance to MRT station	Distance to nearest metro station (meters)
-X4 number of convenience stores	Count of nearby stores
-X5 latitude	Geographical coordinate
-X6 longitude	Geographical coordinate
-Y house price of unit area	💡 Target: House price per unit area
+| Model | MAE | RMSE | R² |
+|---|---:|---:|---:|
+| Training median baseline | 10.7512 | 13.1190 | -0.0051 |
+| Ridge regression | 6.4846 | 8.5331 | 0.5748 |
 
-Technologies Used
-Python 3.x
+MAE and RMSE are in **10,000 New Taiwan dollars per ping**, the dataset's target units. They are not currency-per-property errors. A random historical holdout is not evidence of current UK, Indian or live-market valuation accuracy.
 
-Pandas, NumPy – Data manipulation
+## Reproduce
 
-Matplotlib, Seaborn – Data visualization
+Python 3.11+:
 
-Scikit-learn – Machine learning (Linear Regression)
+```bash
+python -m pip install -r requirements.txt
+python -m unittest discover -s tests -v
+python train.py
+```
 
-Jupyter Notebook – Interactive development environment
+Outputs: `reports/metrics.json`, `holdout_predictions.csv` and `holdout.png`.
 
-Project Workflow
-1. Data Loading & Exploration
-Imported dataset and examined structure
+## Method
 
-Visualized feature relationships with pair plots and distribution curves
+Fixed 70/30 random split, seed 50, yields 289 training and 125 holdout rows. Imputation and standardisation are inside a scikit-learn pipeline. Ridge alpha is selected with five-fold training-only cross-validation on MAE; selected alpha is 1. The final model is compared once against a training-median DummyRegressor on the fixed holdout. The row identifier is excluded from features.
 
-2. Data Preprocessing
-Dropped irrelevant features (e.g., No)
+The three tests cover dataset contract, metric calculations and report generation with the baseline comparison. They do not establish deployment safety or performance on future data.
 
-Defined input features X and target variable y
+![Held-out predicted and observed values](reports/holdout.png)
 
-3. Model Training
-Split dataset into training (70%) and testing (30%) sets
+## Data attribution
 
-Trained a Linear Regression model using Scikit-learn
+Yeh, I. (2018). *Real Estate Valuation* [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5J30W
 
-4. Model Evaluation
-Extracted regression coefficients and intercept
+Official source: https://archive.ics.uci.edu/dataset/477/real+estate+valuation+data+set . The dataset is distributed under CC BY 4.0; credit the original source and identify changes. The CSV filename is retained from the original repository. The new train/holdout evaluation and generated reports are additions; the source observations are not represented as newly collected data.
 
-(Future enhancement: Evaluate with R², MAE, RMSE)
+## Limitations and next decision
 
-Results
-Successfully trained a regression model on real estate data
+Historical 2012–2013 observations, a small geographically concentrated sample and a random split limit generalisation. There is no temporal, geographic or prospective deployment validation. Before using any model for a decision, obtain suitable licensed recent data, define the intended geography and test on an independent time period. Model output is an analytical estimate, not a professional valuation.
 
-Produced interpretable coefficients to understand feature importance
-
-Established a baseline model for price prediction
-
-Future Improvements
-Add model performance metrics: R² score, MAE, RMSE
-Compare with other regression models: Ridge, Lasso, XGBoost
-Build a Streamlit or Flask web app for live predictions
-Deploy the model using Heroku, Render, or AWS Lambda
+The original notebook and model_pickle remain as historical assets. The validated entrypoint is `train.py`; it does not load the legacy pickle. Results reproduced on 23 November 2026.

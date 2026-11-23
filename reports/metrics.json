@@ -1,0 +1,41 @@
+{
+  "dataset_rows": 414,
+  "train_rows": 289,
+  "holdout_rows": 125,
+  "split": {
+    "method": "random holdout",
+    "test_fraction": 0.3,
+    "random_state": 50
+  },
+  "selection": {
+    "method": "five-fold training-only CV",
+    "metric": "MAE",
+    "alpha": 1,
+    "cv_mae": 6.195423958951265
+  },
+  "units": "10,000 New Taiwan dollars per ping",
+  "holdout": {
+    "median_baseline": {
+      "mae": 10.751199999999999,
+      "rmse": 13.119003010899876,
+      "r2": -0.005107635597168203
+    },
+    "ridge": {
+      "mae": 6.484579464673737,
+      "rmse": 8.533139620920286,
+      "r2": 0.5747653826555672
+    }
+  },
+  "feature_columns": [
+    "X1 transaction date",
+    "X2 house age",
+    "X3 distance to the nearest MRT station",
+    "X4 number of convenience stores",
+    "X5 latitude",
+    "X6 longitude"
+  ],
+  "limitations": [
+    "Historical Taiwan data, not a current UK or Indian valuation model",
+    "Random holdout estimates interpolation performance; no temporal or geographic deployment validation"
+  ]
+}
